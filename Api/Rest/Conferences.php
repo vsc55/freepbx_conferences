@@ -22,8 +22,8 @@ class Conferences extends Base {
 			}
 
 			$list = $list ? $list : false;
-
-			return $response->withJson($list);
+			$response->getBody()->write(json_encode($list));
+			return $response->withHeader('Content-Type', 'application/json');
 		})->add($this->checkAllReadScopeMiddleware());
 
 		/**
@@ -34,10 +34,9 @@ class Conferences extends Base {
 		$app->get('/{id}', function ($request, $response, $args) {
 			\FreePBX::Modules()->loadFunctionsInc('conferences');
 			$conference = conferences_get($args['id']);
-
 			$conference = $conference ? $conference : false;
-
-			return $response->withJson($conference);
+			$response->getBody()->write(json_encode($conference));
+			return $response->withHeader('Content-Type', 'application/json');
 		})->add($this->checkAllReadScopeMiddleware());
 
 		/**
@@ -48,8 +47,8 @@ class Conferences extends Base {
 		$app->delete('/{id}', function ($request, $response, $args) {
 			\FreePBX::Modules()->loadFunctionsInc('conferences');
 			conferences_del($args['id']);
-
-			return $response->withJson(true);
+			$response->getBody()->write(json_encode(true));
+			return $response->withHeader('Content-Type', 'application/json');
 		})->add($this->checkAllWriteScopeMiddleware());
 
 		/**
@@ -61,7 +60,8 @@ class Conferences extends Base {
 			$params = $request->getParsedBody();
 			conferences_del($args['id']);
 			$ret = conferences_add($args["id"], $params["name"], $params["userpin"], $params["adminpin"], $params["options"], $params["joinmsg_id"], $params["music"], $params["users"]);
-			return $response->withJson($ret);
+			$response->getBody()->write(json_encode($ret));
+			return $response->withHeader('Content-Type', 'application/json');
 		})->add($this->checkAllWriteScopeMiddleware());
 	}
 }
